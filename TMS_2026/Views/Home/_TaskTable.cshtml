@@ -1,0 +1,178 @@
+﻿@model TaskListVM
+
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://code.jquery.com/ui/1.13.3/jquery-ui.min.js"></script>
+
+<table class="table table-bordered table-sm">
+    <thead>
+      <tr>
+            <th>ID</th>
+            <th>Title</th>
+            <th>Description</th>
+            <th>Due Date</th>
+            <th>Status</th>
+            <th>Remarks</th>
+
+          @*   <th>Created On</th>
+            <th>Last Updated On</th>
+
+            <th>Created By (Id)</th>
+            <th>Created By (Name)</th>
+
+            <th>Updated By (Id)</th>
+            <th>Updated By (Name)</th> *@
+
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var x in Model.Tasks)
+{
+    <tr>
+         <td>@x.TaskId</td>
+         <td>@x.TaskTitle</td>
+            <td>@x.TaskDescription</td>
+            <td>@x.TaskDueDate.ToString("dd-MMM-yyyy")</td>
+            <td>@x.TaskStatus</td>
+            <td>@x.TaskRemarks</td>
+@* 
+            <td>@x.CreatedOn.ToString("dd-MMM-yyyy HH:mm")</td>
+            <td>@x.LastUpdatedOn?.ToString("dd-MMM-yyyy HH:mm")</td>
+
+            <td>@x.CreatedByUserId</td>
+            <td>@x.CreatedByUserName</td>
+
+            <td>@x.LastUpdatedByUserId</td>
+            <td>@x.LastUpdatedByUserName</td> *@
+        <td>
+            <a href="javascript:void(0)"
+   class="btn btn-sm btn-info open-task-modal text-light p-2"    data-bs-toggle="modal"
+               data-bs-target="#taskModal"
+   data-url="@Url.Action("OpenTaskModal","Home", new { id = x.TaskId, mode = "View" })">
+   View
+</a>
+<a href="javascript:void(0)"
+   class="btn btn-sm btn-success open-task-modal text-light p-2"  data-bs-toggle="modal"
+               data-bs-target="#taskModal"
+   data-url="@Url.Action("OpenTaskModal","Home", new { id = x.TaskId, mode = "Edit" })">
+   Edit
+</a>
+<a href="javascript:void(0)"
+   class="btn btn-sm btn-danger delete-task-btn text-light p-2"
+   data-url="@Url.Action("DeleteTask","Home", new {
+        id = x.TaskId,
+        page = Model.Page,
+        pageSize = Model.PageSize,
+        searchTitle = Model.SearchTitle,
+        status = Model.Status,
+        createdBy = Model.CreatedBy
+   })">
+   Delete
+</a>
+
+
+
+        </td>
+    </tr>
+}
+    </tbody>
+</table>
+<!-- Pagination -->
+<nav class="d-flex justify-content-center">
+    <ul class="pagination pagination-sm">
+
+        @{
+            int totalPages = (int)Math.Ceiling((double)Model.TotalRecords / Model.PageSize);
+            int currentPage = Model.Page;
+        }
+
+        <!-- First -->
+        <li class="page-item @(currentPage == 1 ? "disabled" : "")">
+            <a class="page-link"
+               href="@Url.Action("TaskList", new {
+                    page = 1,
+                    pageSize = Model.PageSize,
+                    searchTitle = Model.SearchTitle,
+                    status = Model.Status,
+                    createdBy = Model.CreatedBy
+               })">
+               First
+            </a>
+        </li>
+
+        <!-- Previous -->
+        <li class="page-item @(currentPage == 1 ? "disabled" : "")">
+            <a class="page-link"
+               href="@Url.Action("TaskList", new {
+                    page = currentPage - 1,
+                    pageSize = Model.PageSize,
+                    searchTitle = Model.SearchTitle,
+                    status = Model.Status,
+                    createdBy = Model.CreatedBy
+               })">
+               Previous
+            </a>
+        </li>
+
+        <!-- Page Numbers -->
+        @for (int i = 1; i <= totalPages; i++)
+        {
+            <li class="page-item @(i == currentPage ? "active" : "")">
+                <a class="page-link"
+                   href="@Url.Action("TaskList", new {
+                        page = i,
+                        pageSize = Model.PageSize,
+                        searchTitle = Model.SearchTitle,
+                        status = Model.Status,
+                        createdBy = Model.CreatedBy
+                   })">
+                   @i
+                </a>
+            </li>
+        }
+
+        <!-- Next -->
+        <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
+            <a class="page-link"
+               href="@Url.Action("TaskList", new {
+                    page = currentPage + 1,
+                    pageSize = Model.PageSize,
+                    searchTitle = Model.SearchTitle,
+                    status = Model.Status,
+                    createdBy = Model.CreatedBy
+               })">
+               Next
+            </a>
+        </li>
+
+        <!-- Last -->
+        <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
+            <a class="page-link"
+               href="@Url.Action("TaskList", new {
+                    page = totalPages,
+                    pageSize = Model.PageSize,
+                    searchTitle = Model.SearchTitle,
+                    status = Model.Status,
+                    createdBy = Model.CreatedBy
+               })">
+               Last
+            </a>
+        </li>
+
+    </ul>
+</nav>
+
+<script>
+    $(document).on("click", ".open-task-modal", function () {
+
+        var url = $(this).data("url");
+        console.log("Calling URL:", url);
+
+        $.get(url, function (response) {
+            $("#taskModalContent").html(response);
+            $("#taskModal").modal("show");
+        });
+    });
+</script>

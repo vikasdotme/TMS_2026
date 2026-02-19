@@ -1,0 +1,134 @@
+﻿@using TMS_Models.Entities
+
+@{
+    var task = ViewBag.Modal as TaskEntity;
+    string mode = ViewBag.Mode as string;
+    bool isView = mode == "View";
+}
+
+<form id="taskForm">
+
+    <!-- Hidden Fields -->
+    <input type="hidden" name="TaskId" value="@task?.TaskId" />
+    <input type="hidden" name="Mode" value="@mode" />
+
+    <!-- Modal Header -->
+    <div class="modal-header">
+        <h5 class="modal-title">
+            @(mode == "Create" ? "Create Task" :
+                        mode == "Edit" ? "Edit Task" : "View Task")
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+    </div>
+
+    <!-- Modal Body -->
+    <div class="modal-body">
+
+        <!-- Title -->
+        <div class="mb-2">
+            <label class="form-label">Title</label>
+            <input type="text"
+                   name="TaskTitle"
+                   class="form-control"
+                   value="@task?.TaskTitle"
+                   placeholder="Enter task title"
+                   @(isView ? "readonly" : "") />
+        </div>
+
+        <!-- Description -->
+        <div class="mb-2">
+            <label class="form-label">Description</label>
+            <textarea name="TaskDescription"
+                      class="form-control"
+                      rows="3"
+                      placeholder="Enter description"
+                      @(isView ? "readonly" : "")>@task?.TaskDescription</textarea>
+        </div>
+
+     <div class="mb-2">
+    <label class="form-label">Due Date</label>
+            <input type="text"
+                   id="TaskDueDate"
+                   name="TaskDueDate"
+                   class="form-control datepicker"
+                   value="@( (task?.TaskDueDate != null && task.TaskDueDate != default(DateTime))
+                                     ? task.TaskDueDate.ToString("dd-MM-yyyy")
+                                     : DateTime.Now.ToString("dd-MM-yyyy") )"
+                   @(isView ? "readonly" : "") />
+
+</div>
+
+
+        <!-- Status -->
+        <div class="mb-2">
+            <label class="form-label">Status</label>
+            <select name="TaskStatus"
+                    class="form-select"
+                    @(isView ? "disabled" : "")>
+                <option value="">-- Select Status --</option>
+                <option value="Pending" selected="@(task?.TaskStatus == "Pending")">Pending</option>
+                <option value="In Progress" selected="@(task?.TaskStatus == "In Progress")">In Progress</option>
+                <option value="Not Started" selected="@(task?.TaskStatus == "Not Started")">Not Started</option>
+                <option value="Completed" selected="@(task?.TaskStatus == "Completed")">Completed</option>
+            </select>
+        </div>
+
+        <!-- Remarks -->
+        <div class="mb-2">
+            <label class="form-label">Remarks</label>
+            <textarea name="TaskRemarks"
+                      class="form-control"
+                      rows="2"
+                      placeholder="Remarks"
+                      @(isView ? "readonly" : "")>@task?.TaskRemarks</textarea>
+        </div>
+
+    </div>
+
+    <!-- Modal Footer -->
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+            Close
+        </button>
+
+        @if (!isView)
+        {
+            <button type="submit" class="btn btn-primary">
+                @(mode == "Create" ? "Save" : "Update")
+            </button>
+        }
+    </div>
+
+</form>
+<link rel="stylesheet"
+      href="https://code.jquery.com/ui/1.13.3/themes/base/jquery-ui.css">
+<script src="https://code.jquery.com/ui/1.13.3/jquery-ui.min.js"></script>
+<script>
+    $(document).on("submit", "#taskForm", function (e) {
+        e.preventDefault();
+        $.ajax({
+            url: '@Url.Action("SaveTask", "Home")',
+            type: 'POST',
+            data: $(this).serialize(),
+            success: function (html) {
+               $("#taskListContainer").html(html);
+                $("#taskModal").modal("hide");
+            },
+            error: function () {
+                alert("Error while saving task");
+            }
+        });
+    });
+        $(document).on("focus", ".datepicker", function() {
+        if (!$(this).hasClass("hasDatepicker")) {
+            $(this).datepicker({
+                dateFormat: "dd-mm-yy",
+                changeMonth: true,
+                changeYear: true
+            });
+        }
+    });
+
+</script>
+
+

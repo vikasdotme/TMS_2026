@@ -1,0 +1,95 @@
+﻿@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@{
+    var userId = HttpContextAccessor.HttpContext?.Session.GetString("UserId") ?? "User001";
+    var userRole = HttpContextAccessor.HttpContext?.Session.GetString("UserRole") ?? "Admin";
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - TMS_2026</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/TMS_2026.styles.css" asp-append-version="true" />
+    <link rel="stylesheet"
+          href="https://code.jquery.com/ui/1.13.3/themes/base/jquery-ui.css">
+    <style>
+        body {
+            font-size: 12px; /* 👈 small text */
+        }
+        table th, table td {
+            white-space: nowrap;
+            padding: 6px 8px;
+            vertical-align: middle;
+        }
+        .table-responsive {
+            max-height: 520px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-light bg-white border-bottom box-shadow mb-3">
+            <div class="container-fluid">
+
+                <!-- Left Side: Brand / Software Name -->
+                <a class="navbar-brand fw-bold" href="@Url.Action("Index", "Home")">TMS Software</a>
+
+                <!-- Mobile toggle -->
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent"
+                        aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- Navbar content -->
+                <div class="collapse navbar-collapse" id="navbarContent">
+                    <!-- Left Menu (optional) -->
+                    <ul class="navbar-nav me-auto mb-2 mb-sm-0">
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" href="@Url.Action("Index", "Home")">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" href="@Url.Action("Privacy", "Home")">Privacy</a>
+                        </li>
+                    </ul>
+
+                    <!-- Right Side: User Info -->
+                    <ul class="navbar-nav ms-auto align-items-center">
+
+                        <!-- User Info -->
+                        <li class="nav-item me-3 text-dark">
+                            <span>@userId - @userRole</span>
+                        </li>
+
+                        <!-- Static User Profile Icon -->
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">
+                                <img src="~/images/user-profile.png" alt="Profile" class="rounded-circle" style="width:32px; height:32px;">
+                            </a>
+                        </li>
+                    </ul>
+
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; 2026 - TMS_2026 - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        </div>
+    </footer>
+    <script src="https://code.jquery.com/ui/1.13.3/jquery-ui.min.js"></script>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
