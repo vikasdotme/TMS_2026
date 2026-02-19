@@ -361,3 +361,9 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+# Allow database backup files
+!DatabaseBackup/
+!DatabaseBackup/*.bak
+
+# Allow documentation text files
+!*.txt
